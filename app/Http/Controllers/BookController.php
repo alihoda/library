@@ -24,7 +24,7 @@ class BookController extends Controller
     {
         // Retrieve all books
         return Cache::tags('books')->remember('book-list', now()->addMinutes(5), function () {
-            return BookResource::collection(Book::all());
+            return BookResource::collection(Book::latest()->with('publisher')->get());
         });
     }
 

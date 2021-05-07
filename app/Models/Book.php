@@ -27,4 +27,10 @@ class Book extends Model
     {
         return $this->belongsTo(Publisher::class);
     }
+
+    // Scopes
+    public function scopeLatest($query)
+    {
+        return $query->orderBy(static::CREATED_AT, 'desc');
+    }
 }
