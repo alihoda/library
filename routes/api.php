@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserAuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,3 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [UserAuthController::class, 'register'])->name('register');
 Route::post('login', [UserAuthController::class, 'login'])->name('login');
 Route::post('logout', [UserAuthController::class, 'logout'])->name('logout')->middleware('auth:api');
+
+
+// user model routes
+Route::apiResource('user', UserController::class)->except(['index', 'store']);
