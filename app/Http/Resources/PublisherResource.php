@@ -17,7 +17,7 @@ class PublisherResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'books' => $this->when(true, BookResource::collection($this->books))
+            'books' => $this->when(true, BookPublisherResource::collection($this->books))
         ];
     }
 }
