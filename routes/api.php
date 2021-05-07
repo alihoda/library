@@ -23,3 +23,8 @@ Route::post('logout', [UserAuthController::class, 'logout'])->name('logout')->mi
 
 // user model routes
 Route::apiResource('user', UserController::class)->except(['index', 'store']);
+
+// Fallback route
+Route::fallback(function () {
+    return response()->json(['message' => 'Not Found'], 404);
+})->name('api.fallback');
