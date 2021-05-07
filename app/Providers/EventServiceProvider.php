@@ -34,5 +34,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         User::observe(UserObserver::class);
+        Book::observe(BookObserver::class);
+        Publisher::observe(PublisherObserver::class);
     }
 }
