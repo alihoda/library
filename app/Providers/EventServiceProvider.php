@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Book;
+use App\Models\Category;
 use App\Models\Publisher;
 use App\Models\User;
 use App\Observers\BookObserver;
+use App\Observers\CategoryObserver;
 use App\Observers\PublisherObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
@@ -36,5 +38,6 @@ class EventServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         Book::observe(BookObserver::class);
         Publisher::observe(PublisherObserver::class);
+        Category::observe(CategoryObserver::class);
     }
 }

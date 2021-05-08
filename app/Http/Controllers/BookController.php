@@ -7,6 +7,7 @@ use App\Http\Requests\BookUpdateRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Category;
 use App\Models\Publisher;
 use Illuminate\Support\Facades\Cache;
 
@@ -44,6 +45,9 @@ class BookController extends Controller
         // Assign the authors to the books
         $authorsId = Author::retrieveAuthorsId($request->input('author'));
         $book->authors()->sync($authorsId);
+        //Assign the categories to the books
+        $categoriesId = Category::retrieveCategoriesId($request->input('category'));
+        $book->categories()->sync($categoriesId);
 
         // Return book
         return response()->json([
