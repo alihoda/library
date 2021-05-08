@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PublisherResource;
+use App\Http\Resources\PublisherAuthorResource;
 use App\Models\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,7 +20,7 @@ class PublisherController extends Controller
     public function index()
     {
         return Cache::tags('publishers')->remember('publisher-list', now()->addMinutes(5), function () {
-            return PublisherResource::collection(Publisher::with('books')->get());
+            return PublisherAuthorResource::collection(Publisher::with('books')->get());
         });
     }
 
@@ -43,7 +43,7 @@ class PublisherController extends Controller
         // Return message
         return response()->json([
             'message' => 'Publisher created',
-            'data' => new PublisherResource($publisher)
+            'data' => new PublisherAuthorResource($publisher)
         ]);
     }
 
@@ -53,7 +53,7 @@ class PublisherController extends Controller
     public function show($publisher)
     {
         return Cache::tags('publishers')->remember("publisher-{$publisher}", now()->addMinutes(5), function () use ($publisher) {
-            return new PublisherResource(Publisher::with('books')->findOrFail($publisher));
+            return new PublisherAuthorResource(Publisher::with('books')->findOrFail($publisher));
         });
     }
 
@@ -74,7 +74,7 @@ class PublisherController extends Controller
         // Return message
         return response()->json([
             'message' => 'Publisher updated',
-            'data' => new PublisherResource($publisher)
+            'data' => new PublisherAuthorResource($publisher)
         ]);
     }
 
