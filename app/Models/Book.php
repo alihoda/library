@@ -28,6 +28,11 @@ class Book extends Model
         return $this->belongsTo(Publisher::class);
     }
 
+    public function authors()
+    {
+        return $this->belongsToMany(Author::class);
+    }
+
     // Scopes
     public function scopeLatest($query)
     {

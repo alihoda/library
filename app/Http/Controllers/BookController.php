@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookStoreRequest;
 use App\Http\Requests\BookUpdateRequest;
 use App\Http\Resources\BookResource;
+use App\Models\Author;
 use App\Models\Book;
 use App\Models\Publisher;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class BookController extends Controller
@@ -24,7 +24,7 @@ class BookController extends Controller
     {
         // Retrieve all books
         return Cache::tags('books')->remember('book-list', now()->addMinutes(5), function () {
-            return BookResource::collection(Book::latest()->with('publisher')->get());
+            return BookResource::collection(Book::latest()->with(['publisher', 'authors'])->get());
         });
     }
 
@@ -41,6 +41,9 @@ class BookController extends Controller
         $request['publisher_id'] = Publisher::retrievePublisherId($request['publisher']);
         // Create book object
         $book = Book::create($request->all());
+        // Assign the authors to the books
+        $authorsId = Author::retrieveAuthorsId($request->input('author'));
+        $book->authors()->sync($authorsId);
 
         // Return book
         return response()->json([
@@ -52,11 +55,11 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show($book)
     {
         // Retrieve requested book
-        return Cache::tags('books')->remember("book-{$book->id}", now()->addMinutes(5), function () use ($book) {
-            return new BookResource($book);
+        return Cache::tags('books')->remember("book-{$book}", now()->addMinutes(5), function () use ($book) {
+            return new BookResource(Book::with(['publisher', 'authors'])->findOrFail($book));
         });
     }
 
