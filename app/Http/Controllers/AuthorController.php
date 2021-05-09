@@ -11,7 +11,7 @@ class AuthorController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['index', 'show']);
+        $this->middleware(['auth:api', 'can:admin'])->except(['index', 'show']);
     }
 
     /**
@@ -57,8 +57,6 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        // Authorize user as admin
-        // $this->authorize('update', $author);
         // Validate request
         $request->validate([
             'name' => 'bail | min:3 | max:50 | string'
@@ -77,8 +75,6 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        // Authorize user as admin
-        // $this->authorize('delete', $author);
         // Delete the author model
         $author->delete();
         // Return message

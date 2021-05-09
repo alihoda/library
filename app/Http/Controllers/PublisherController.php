@@ -11,7 +11,7 @@ class PublisherController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['index', 'show']);
+        $this->middleware(['auth:api', 'can:admin'])->except(['index', 'show']);
     }
 
     /**
@@ -29,9 +29,6 @@ class PublisherController extends Controller
      */
     public function store(Request $request)
     {
-        // Authorize user as admin
-        // $this->authorize('create');
-
         // validate request
         $request->validate([
             'name' => 'bail | required | min:5 | max:100 | string | unique:publishers'
@@ -62,8 +59,6 @@ class PublisherController extends Controller
      */
     public function update(Request $request, Publisher $publisher)
     {
-        // Authorize user as admin
-        $this->authorize('create', $publisher);
         // validate request
         $request->validate([
             'name' => 'bail | min:5 | max:100 | string | unique:publishers'
@@ -83,8 +78,6 @@ class PublisherController extends Controller
      */
     public function destroy(Publisher $publisher)
     {
-        // Authorize user as admin
-        $this->authorize('delete', $publisher);
         // Delete the publisher record
         $publisher->delete();
         // Return message

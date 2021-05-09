@@ -16,7 +16,7 @@ class BookController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['index', 'show']);
+        $this->middleware(['auth:api', 'can:admin'])->except(['index', 'show']);
     }
 
     /**
@@ -82,9 +82,6 @@ class BookController extends Controller
      */
     public function update(BookUpdateRequest $request, Book $book)
     {
-        // Authorize user as admin
-        $this->authorize('update', $book);
-
         // Validate request
         $request->validated();
         // Update the book
@@ -101,8 +98,6 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        // Authorize user as admin
-        $this->authorize('delete', $book);
         // Delete the book record
         $book->delete();
 

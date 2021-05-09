@@ -24,8 +24,6 @@ class UserController extends Controller
 
     public function update(UserUpdateRequest $request, User $user)
     {
-        // authorize user to update action
-        $this->authorize('update', $user);
         // update user record with request's data
         $user->update($request->all());
         // return successful message
@@ -37,8 +35,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // authorize user to destroy action
-        $this->authorize('delete', $user);
         // delete user's tokens
         $user->tokens()->delete();
         // delete user record
