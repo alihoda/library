@@ -15,12 +15,13 @@ class CreateBooksTable extends Migration
     {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
+            $table->string('title');
             $table->text('description');
-            $table->string('year', 4);
+            $table->string('year');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('publisher_id')->constrained()->onDelete('cascade');
             $table->string('digikala')->nullable();
+            $table->string('pdf_path')->nullable();
             $table->timestamps();
         });
     }
