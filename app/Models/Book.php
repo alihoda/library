@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -14,7 +15,8 @@ class Book extends Model
         'description',
         'year',
         'user_id',
-        'publisher_id'
+        'publisher_id',
+        'pdf_path'
     ];
 
     // Relations
@@ -47,5 +49,10 @@ class Book extends Model
     public function scopeLatest($query)
     {
         return $query->orderBy(static::CREATED_AT, 'desc');
+    }
+
+    public function url()
+    {
+        return Storage::url($this->pdf_path);
     }
 }

@@ -26,7 +26,8 @@ class BookStoreRequest extends FormRequest
         return [
             'title' => 'bail | required | min:5 | max:100',
             'description' => 'bail | required | min:5 | max: 255',
-            'year' => 'bail | required | size:4'
+            'year' => 'bail | required | size:4',
+            'pdf_file' => 'pdf | mimes:pdf'
         ];
     }
 }

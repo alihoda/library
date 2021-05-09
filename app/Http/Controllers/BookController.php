@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\Publisher;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -40,21 +41,30 @@ class BookController extends Controller
         // Assign current user's id as book's user_id
         $request['user_id'] = $request->user()->id;
         // Retrieve publisher id
-        $request['publisher_id'] = Publisher::retrievePublisherId($request['publisher']);
+        $request['publisher_id'] = Publisher::retrievePublisherId($request->publisher);
+
+        // Extract pdf file from request and store it in storage
+        if ($request->hasFile('pdf_file')) {
+            $request['pdf_path'] = $request->file('pdf_file')->store('book_pdf');
+        }
+
         // Create book object
         $book = Book::create($request->all());
 
         // Assign the authors to the books
-        $authorsId = Author::retrieveAuthorsId($request->input('author'));
+        $authorsId = Author::retrieveAuthorsId($request->author);
         $book->authors()->sync($authorsId);
         //Assign the categories to the books
-        $categoriesId = Category::retrieveCategoriesId($request->input('category'));
+        $categoriesId = Category::retrieveCategoriesId($request->category);
         $book->categories()->sync($categoriesId);
 
         // Extract images in the request and assign them to the book
         if ($request->hasFile('image')) {
+            // Iterate in all given images
             foreach ($request->file('image') as $image) {
+                // Store each image
                 $path = $image->store('book_images');
+                // Assign each image to the book
                 $book->images()->save(Image::make(['path' => $path]));
             }
         }
@@ -84,9 +94,21 @@ class BookController extends Controller
     {
         // Validate request
         $request->validated();
+
+        // Extract pdf file from request and store it in storage
+        if ($request->hasFile('pdf_file')) {
+            // Delete existence pdf
+            if ($book->pdf_path) {
+                Storage::delete($book->pdf_path);
+            }
+            // Store the new pdf
+            $request['pdf_path'] = $request->file('pdf_file')->store('book_pdf');
+        }
+
         // Update the book
         $book->update($request->all());
 
+        // Return message
         return response()->json([
             'message' => 'Book updated',
             'data' => new BookResource($book)

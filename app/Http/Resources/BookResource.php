@@ -19,6 +19,7 @@ class BookResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'year' => $this->year,
+            'pdf_path' => $this->pdf_path !== null ? $this->url() : '',
             'publisher' => new BookPublisherAuthorResource($this->publisher),
             'authors' => BookPublisherAuthorResource::collection($this->authors),
             'categories' => BookPublisherAuthorResource::collection($this->categories),

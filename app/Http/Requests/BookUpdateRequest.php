@@ -26,7 +26,9 @@ class BookUpdateRequest extends FormRequest
         return [
             'title' => 'bail | min:5 | max:100',
             'description' => 'bail | min:5 | max: 255',
-            'year' => 'bail | size:4 | numeric'
+            'year' => 'bail | size:4 | numeric',
+            'pdf_file' => 'mimes:pdf'
+
         ];
     }
 }

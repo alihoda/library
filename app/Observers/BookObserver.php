@@ -17,6 +17,7 @@ class BookObserver
 
     public function updating(Book $book)
     {
+        // Clear caches
         Cache::tags(['books'])->forget('book-list');
         Cache::tags(['books'])->forget("book-{$book->id}");
 
@@ -29,6 +30,9 @@ class BookObserver
         Cache::tags(['books'])->forget("book-{$book->id}");
 
         $this->clearCaches($book);
+
+        // Delete the book's pdf file from storage
+        Storage::delete($book->pdf_path);
 
         // Delete the book's images
         foreach ($book->images as $image) {
