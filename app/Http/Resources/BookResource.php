@@ -19,9 +19,10 @@ class BookResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'year' => $this->year,
-            'publisher' => new BookPublisherAuthorResource($this->whenLoaded('publisher')),
-            'authors' => BookPublisherAuthorResource::collection($this->whenLoaded('authors')),
+            'publisher' => new BookPublisherAuthorResource($this->publisher),
+            'authors' => BookPublisherAuthorResource::collection($this->authors),
             'categories' => BookPublisherAuthorResource::collection($this->categories),
+            'images' => ImageResource::collection($this->images),
         ];
     }
 }

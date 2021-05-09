@@ -38,6 +38,11 @@ class Book extends Model
         return $this->belongsToMany(Category::class);
     }
 
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
+
     // Scopes
     public function scopeLatest($query)
     {

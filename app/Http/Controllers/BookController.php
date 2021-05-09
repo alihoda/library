@@ -8,6 +8,7 @@ use App\Http\Resources\BookResource;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
+use App\Models\Image;
 use App\Models\Publisher;
 use Illuminate\Support\Facades\Cache;
 
@@ -42,12 +43,21 @@ class BookController extends Controller
         $request['publisher_id'] = Publisher::retrievePublisherId($request['publisher']);
         // Create book object
         $book = Book::create($request->all());
+
         // Assign the authors to the books
         $authorsId = Author::retrieveAuthorsId($request->input('author'));
         $book->authors()->sync($authorsId);
         //Assign the categories to the books
         $categoriesId = Category::retrieveCategoriesId($request->input('category'));
         $book->categories()->sync($categoriesId);
+
+        // Extract images in the request and assign them to the book
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                $path = $image->store('book_images');
+                $book->images()->save(Image::make(['path' => $path]));
+            }
+        }
 
         // Return book
         return response()->json([
@@ -63,7 +73,7 @@ class BookController extends Controller
     {
         // Retrieve requested book
         return Cache::tags('books')->remember("book-{$book}", now()->addMinutes(5), function () use ($book) {
-            return new BookResource(Book::with(['publisher', 'authors'])->findOrFail($book));
+            return new BookResource(Book::with(['publisher', 'authors', 'images'])->findOrFail($book));
         });
     }
 
@@ -95,6 +105,7 @@ class BookController extends Controller
         $this->authorize('delete', $book);
         // Delete the book record
         $book->delete();
+
         // Return message
         return response()->json(['message' => 'Book deleted']);
     }

@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Book;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class BookObserver
 {
@@ -28,6 +29,12 @@ class BookObserver
         Cache::tags(['books'])->forget("book-{$book->id}");
 
         $this->clearCaches($book);
+
+        // Delete the book's images
+        foreach ($book->images as $image) {
+            Storage::delete($image->path);
+        }
+        $book->images()->delete();
     }
 
     private function clearCaches(Book $book)

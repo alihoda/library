@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PublisherController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
@@ -28,6 +29,7 @@ Route::post('logout', [UserAuthController::class, 'logout'])->name('logout')->mi
 // user model routes
 Route::apiResource('user', UserController::class)->except(['index', 'store']);
 
+
 // Book routes
 Route::apiResource('book', BookController::class);
 
@@ -39,6 +41,10 @@ Route::apiResource('author', AuthorController::class);
 
 // Category routes
 Route::apiResource('category', CategoryController::class);
+
+// Image route
+Route::apiResource('book.image', ImageController::class);
+
 
 // Fallback route
 Route::fallback(function () {
