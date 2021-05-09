@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UserUpdateRequest extends FormRequest
@@ -27,6 +28,7 @@ class UserUpdateRequest extends FormRequest
             'name' => 'bail | string | min:3',
             'username' => 'bail | min:3 | max:15 | unique:users',
             'email' => 'bail | email | max:30',
+            'role' => ['string', Rule::in(['admin', 'user'])],
         ];
     }
 }

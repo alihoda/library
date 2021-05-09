@@ -15,6 +15,12 @@ class UserAuthController extends Controller
     {
         $request->validated();
 
+        // Check if request has role parameter and the requested user is admin
+        if ($request->role === 'admin' && $request->user()->role !== 'admin') {
+            return response()->json([
+                'message' => 'This action is unauthorize'
+            ], 403);
+        }
         // hash password
         $request['password'] = Hash::make($request['password']);
         // create user

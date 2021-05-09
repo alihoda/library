@@ -13,6 +13,8 @@ class UserController extends Controller
     {
         // check user has token (logged in) to update and destroy
         $this->middleware('auth:api')->only(['update', 'destroy']);
+        // Authorize requests
+        $this->authorizeResource(User::class, '$user');
     }
 
     public function show($user)
@@ -24,6 +26,16 @@ class UserController extends Controller
 
     public function update(UserUpdateRequest $request, User $user)
     {
+        //Validate request
+        $request->validated();
+
+        // Check if request has role parameter and the requested user is admin
+        if ($request->role === 'admin' && $request->user()->role !== 'admin') {
+            return response()->json([
+                'message' => 'This action is unauthorize'
+            ], 403);
+        }
+
         // update user record with request's data
         $user->update($request->all());
         // return successful message
