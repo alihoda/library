@@ -44,14 +44,5 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
         });
-
-        // Roles based authorization
-        foreach (self::$permissions as $action => $roles) {
-            Gate::define($action, function (User $user) use ($roles) {
-                if (in_array($user->role, $roles)) {
-                    return true;
-                }
-            });
-        }
     }
 }
