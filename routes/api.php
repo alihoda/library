@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PublisherController;
 use App\Http\Controllers\UserAuthController;
@@ -45,6 +46,8 @@ Route::apiResource('category', CategoryController::class);
 // Image route
 Route::apiResource('book.image', ImageController::class);
 
+// Comment routes
+Route::apiResource('book.comment', CommentController::class);
 
 // Fallback route
 Route::fallback(function () {

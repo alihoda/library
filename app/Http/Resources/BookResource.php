@@ -24,6 +24,7 @@ class BookResource extends JsonResource
             'authors' => BookPublisherAuthorResource::collection($this->authors),
             'categories' => BookPublisherAuthorResource::collection($this->categories),
             'images' => ImageResource::collection($this->images),
+            'comments' => BookCommentResource::collection($this->comments)
         ];
     }
 }

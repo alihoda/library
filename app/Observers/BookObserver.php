@@ -20,6 +20,7 @@ class BookObserver
         // Clear caches
         Cache::tags(['books'])->forget('book-list');
         Cache::tags(['books'])->forget("book-{$book->id}");
+        Cache::tags(['comments'])->forget("book-{$book->id}-comment-list");
 
         $this->clearCaches($book);
     }
@@ -28,6 +29,7 @@ class BookObserver
     {
         Cache::tags(['books'])->forget('book-list');
         Cache::tags(['books'])->forget("book-{$book->id}");
+        Cache::tags(['comments'])->forget("book-{$book->id}-comment-list");
 
         $this->clearCaches($book);
 
@@ -48,6 +50,7 @@ class BookObserver
         Cache::tags(['categories'])->forget('category-list');
 
         Cache::tags(['publishers'])->forget("publisher-{$book->publisher_id}");
+
         // Clear all the book's author's cache
         foreach ($book->authors as $author) {
             Cache::tags(['authors'])->forget("author-{$author->id}");

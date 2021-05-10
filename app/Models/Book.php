@@ -45,6 +45,11 @@ class Book extends Model
         return $this->hasMany(Image::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->latest();
+    }
+
     // Scopes
     public function scopeLatest($query)
     {
