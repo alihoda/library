@@ -79,7 +79,7 @@ class ImageController extends Controller
         // Delete image from storage
         Storage::delete($image->path);
         // Delete the image model
-        $book->images()->where('id', $image->id)->delete();
+        $image->delete();
 
         return response()->json(['message' => 'Image deleted']);
     }
