@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,9 @@ Route::apiResource('book.image', ImageController::class);
 
 // Comment routes
 Route::apiResource('book.comment', CommentController::class);
+
+// Search route
+Route::get('search', [SearchController::class, 'search'])->name('search');
 
 // Fallback route
 Route::fallback(function () {
