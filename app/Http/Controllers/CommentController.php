@@ -22,7 +22,7 @@ class CommentController extends Controller
     public function index(Book $book)
     {
         return Cache::tags('comments')->remember("book-{$book->id}-comment-list", now()->addMinutes(5), function () use ($book) {
-            return CommentResource::collection($book->comments);
+            return CommentResource::collection($book->comments->latest());
         });
     }
 
