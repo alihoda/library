@@ -26,6 +26,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'username' => Str::lower($this->faker->firstName()),
             'email' => $this->faker->unique()->safeEmail(),
+            'reviewer' => $this->faker->boolean(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
@@ -34,10 +35,13 @@ class UserFactory extends Factory
     public function admin()
     {
         return $this->state(function (array $attributes) {
+            $name = 'admin' . $this->faker->unique()->numberBetween(1, 5);
+            $email = $name . '@test.com';
+
             return [
-                'name' => 'test',
-                'username' => 'test',
-                'email' => 'test@test.com',
+                'name' => $name,
+                'username' => $name,
+                'email' => $email,
                 'role' => 'admin'
             ];
         });

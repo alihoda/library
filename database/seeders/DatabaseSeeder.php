@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Cache;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,13 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // Ask questions from user
+        if ($this->command->confirm('Want to refresh database?', true)) {
+            $this->command->call('migrate:refresh');
+            $this->command->info('Database is seeded');
+        }
 
-        $userCount = max((int)$this->command->ask('How many users would you like?', 5), 1);
+        // Flush all caches
+        Cache::tags(['books'])->flush();
+        Cache::tags(['authors'])->flush();
+        Cache::tags(['comments'])->flush();
+        Cache::tags(['publishers'])->flush();
+        Cache::tags(['categories'])->flush();
 
-        // Create an admin user
-        User::factory()->admin()->create();
-        // Create $userCount normal user
-        User::factory($userCount)->create();
+        // Call seeders
+        $this->call([
+            UserSeeder::class,
+            AuthorPublisherCategorySeeder::class,
+            BookSeeder::class,
+            BookAuthorCategorySeeder::class,
+            CommentSeeder::class
+        ]);
     }
 }
