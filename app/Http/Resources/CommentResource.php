@@ -3,30 +3,30 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
     public function toArray($request)
     {
-        // Retrieve comments which their user is reviewer
-        $reviewerComments = $this->whereHas('user', function ($query) {
-            $query->where('reviewer', 1);
-        })->get();
-
-        // Retrieve comments which their user is not reviewer
-        $otherComments = $this->whereHas('user', function ($query) {
-            $query->where('reviewer', 0);
-        })->get();
+        if ($this->user) {
+            $user = [
+                'id' => $this->user->id,
+                'username' => $this->user->username
+            ];
+        } else {
+            $user = $this->user_name;
+        }
 
         return [
-            'reviewerComments' => CommentUserResource::collection($reviewerComments),
-            'otherComments' => CommentUserResource::collection($otherComments),
+            'id' => $this->id,
+            'title' => $this->title,
+            'content' => $this->content,
+            'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
+            'user' => $user,
         ];
     }
 }

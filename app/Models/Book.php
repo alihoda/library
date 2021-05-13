@@ -52,6 +52,11 @@ class Book extends Model implements Searchable
         return $this->hasMany(Comment::class)->latest();
     }
 
+    public function guestComments()
+    {
+        return $this->hasMany(GuestComment::class)->latest();
+    }
+
     // Scopes
     public function scopeLatest($query)
     {

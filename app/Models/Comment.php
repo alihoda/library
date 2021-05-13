@@ -23,14 +23,17 @@ class Comment extends Model
     }
 
     // Scopes
-    public function scopeLatest($query)
-    {
-        return $query->orderBy(static::CREATED_AT, 'desc');
-    }
-
     public function scopeReviewerComments($query)
     {
-        dd($query->where('user->reviewer', true));
-        return $query->where($query->user->reviewer, true);
+        return $this->whereHas('user', function ($query) {
+            $query->where('reviewer', 1);
+        })->orderBy(static::CREATED_AT, 'desc')->get();
+    }
+
+    public function scopeUserComments($query)
+    {
+        return $this->whereHas('user', function ($query) {
+            $query->where('reviewer', 0);
+        })->get();
     }
 }

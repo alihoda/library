@@ -5,15 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CommentStoreRequest;
 use App\Http\Requests\CommentUpdateRequest;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\CommentUserResource;
 use App\Models\Book;
 use App\Models\Comment;
+use App\Models\GuestComment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class CommentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api'])->except(['index', 'show']);
+        $this->middleware(['auth:api'])->except(['index', 'show', 'store']);
     }
 
     /**
@@ -21,8 +24,18 @@ class CommentController extends Controller
      */
     public function index(Book $book)
     {
-        return Cache::tags('comments')->remember("book-{$book->id}-comment-list", now()->addMinutes(5), function () use ($book) {
-            return CommentResource::collection($book->comments->latest());
+        return Cache::tags('comments')->remember("book-{$book->id}-comment-list", now()->addSeconds(30), function () use ($book) {
+
+            $reviewerComments = CommentResource::collection($book->comments()->with('user')->reviewerComments());
+            $userComments = CommentResource::collection($book->comments()->with('user')->userComments());
+            $guestComments = CommentResource::collection($book->guestComments()->latest()->get());
+
+            $otherComments = $userComments->merge($guestComments)->sortByDesc('created_at')->values();
+
+            return response()->json([
+                'reviewerComments' => $reviewerComments,
+                'otherComments' => $otherComments,
+            ]);
         });
     }
 
@@ -35,17 +48,34 @@ class CommentController extends Controller
         $request->validated();
         // Assign the comment's foreign keys
         $request['book_id'] = $book->id;
-        $request['user_id'] = $request->user()->id;
 
+        // Check if user is authenticated
+        if ($user = Auth::guard("api")->user()) {
+
+            $request['user_id'] = $user->id;
+            // Make an instance model of Comment
+            $comment = Comment::make($request->all());
+            // Assign the instance to the book and store it
+            $book->comments()->save($comment);
+            // Return message
+            return response()->json([
+                'message' => 'Comment posted',
+                'data' => new CommentUserResource($comment)
+            ]);
+        }
+
+        // User is guest (not authenticated)
+
+        $request['user_name'] = $request->user_name;
         // Make an instance model of Comment
-        $comment = Comment::make($request->all());
+        $comment = GuestComment::make($request->all());
         // Assign the instance to the book and store it
-        $book->comments()->save($comment);
+        $book->guestComments()->save($comment);
 
         // Return message
         return response()->json([
             'message' => 'Comment posted',
-            'data' => new CommentResource($comment)
+            'data' => new CommentUserResource($comment)
         ]);
     }
 
@@ -54,7 +84,7 @@ class CommentController extends Controller
      */
     public function show(Book $book, Comment $comment)
     {
-        return Cache::tags('comments')->remember("book-{$book->id}-comment-{$comment->id}", now()->addMinutes(5), function () use ($comment) {
+        return Cache::tags('comments')->remember("book-{$book->id}-comment-{$comment->id}", now()->addMinute(), function () use ($comment) {
             return new CommentResource($comment);
         });
     }
