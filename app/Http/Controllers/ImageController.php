@@ -16,7 +16,7 @@ class ImageController extends Controller
      */
     public function index(Book $book)
     {
-        return Cache::tags('images')->remember("book-{$book->id}-image-list", now()->addMinutes(5), function () use ($book) {
+        return Cache::tags('images')->remember("book-{$book->id}-image-list", now()->addMinute(), function () use ($book) {
             return ImageResource::collection($book->images);
         });
     }
@@ -45,7 +45,7 @@ class ImageController extends Controller
      */
     public function show(Book $book, Image $image)
     {
-        return Cache::tags('images')->remember("book-{$book->id}-image-{$image->id}", now()->addMinutes(5), function () use ($image) {
+        return Cache::tags('images')->remember("book-{$book->id}-image-{$image->id}", now()->addMinute(), function () use ($image) {
             return new ImageResource($image);
         });
     }

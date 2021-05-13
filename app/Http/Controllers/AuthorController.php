@@ -19,7 +19,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        return Cache::tags('authors')->remember('author-list', now()->addMinutes(5), function () {
+        return Cache::tags('authors')->remember('author-list', now()->addMinute(), function () {
             return PublisherAuthorCategoryResource::collection(Author::with('books')->withCount('books')->get());
         });
     }
@@ -47,7 +47,7 @@ class AuthorController extends Controller
      */
     public function show($author)
     {
-        return Cache::tags('authors')->remember("author-{$author}", now()->addMinutes(5), function () use ($author) {
+        return Cache::tags('authors')->remember("author-{$author}", now()->addMinute(), function () use ($author) {
             return new PublisherAuthorCategoryResource(Author::with('books')->withCount('books')->findOrFail($author));
         });
     }

@@ -19,7 +19,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Cache::tags('categories')->remember('category-list', now()->addMinutes(5), function () {
+        return Cache::tags('categories')->remember('category-list', now()->addMinute(), function () {
             return PublisherAuthorCategoryResource::collection(Category::with('books')->withCount('books')->get());
         });
     }
@@ -47,7 +47,7 @@ class CategoryController extends Controller
      */
     public function show($category)
     {
-        return Cache::tags('categories')->remember("category-{$category}", now()->addMinutes(5), function () use ($category) {
+        return Cache::tags('categories')->remember("category-{$category}", now()->addMinute(), function () use ($category) {
             return new PublisherAuthorCategoryResource(Category::with('books')->withCount('books')->findOrFail($category));
         });
     }

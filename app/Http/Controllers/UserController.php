@@ -19,7 +19,7 @@ class UserController extends Controller
 
     public function show($user)
     {
-        return Cache::tags('users')->remember("user-{$user}", now()->addMinutes(5), function () use ($user) {
+        return Cache::tags('users')->remember("user-{$user}", now()->addMinute(), function () use ($user) {
             return new UserResource(User::with('books')->findOrFail($user));
         });
     }

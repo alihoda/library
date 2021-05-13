@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookStoreRequest;
 use App\Http\Requests\BookUpdateRequest;
+use App\Http\Resources\BookListResource;
 use App\Http\Resources\BookResource;
 use App\Models\Author;
 use App\Models\Book;
@@ -26,8 +27,8 @@ class BookController extends Controller
     public function index()
     {
         // Retrieve all books
-        return Cache::tags('books')->remember('book-list', now()->addMinutes(5), function () {
-            return BookResource::collection(Book::latest()->with(['publisher', 'authors'])->get());
+        return Cache::tags('books')->remember('book-list', now()->addMinute(), function () {
+            return BookListResource::collection(Book::latest()->with(['publisher', 'authors'])->get());
         });
     }
 
@@ -82,7 +83,7 @@ class BookController extends Controller
     public function show($book)
     {
         // Retrieve requested book
-        return Cache::tags('books')->remember("book-{$book}", now()->addMinutes(5), function () use ($book) {
+        return Cache::tags('books')->remember("book-{$book}", now()->addMinute(), function () use ($book) {
             return new BookResource(Book::with(['publisher', 'authors', 'images'])->findOrFail($book));
         });
     }

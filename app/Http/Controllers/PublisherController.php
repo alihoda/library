@@ -19,7 +19,7 @@ class PublisherController extends Controller
      */
     public function index()
     {
-        return Cache::tags('publishers')->remember('publisher-list', now()->addMinutes(5), function () {
+        return Cache::tags('publishers')->remember('publisher-list', now()->addMinute(), function () {
             return PublisherAuthorCategoryResource::collection(Publisher::with('books')->get());
         });
     }
@@ -49,7 +49,7 @@ class PublisherController extends Controller
      */
     public function show($publisher)
     {
-        return Cache::tags('publishers')->remember("publisher-{$publisher}", now()->addMinutes(5), function () use ($publisher) {
+        return Cache::tags('publishers')->remember("publisher-{$publisher}", now()->addMinute(), function () use ($publisher) {
             return new PublisherAuthorCategoryResource(Publisher::with('books')->findOrFail($publisher));
         });
     }
